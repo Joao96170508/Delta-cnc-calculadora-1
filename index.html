@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calculadora de Parâmetros de Fresas - Delta CNC</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f7f9;
+    margin: 0; padding: 20px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    color: #005792;
+  }
+  table {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  }
+  th, td {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  th {
+    background: #005792;
+    color: white;
+  }
+  input[type=number] {
+    width: 80px;
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .result {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #e1f0ff;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 1.1em;
+    color: #003d66;
+  }
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #777;
+    font-size: 0.9em;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Delta CNC - Calculadora de Parâmetros de Fresas</h1>
+</header>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parâmetro</th>
+      <th>Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Diâmetro da Fresa (mm)</td>
+      <td><input type="number" id="diametro" min="0.1" step="0.1" value="6" /></td>
+    </tr>
+    <tr>
+      <td>RPM do Spindle</td>
+      <td><input type="number" id="rpm" min="100" step="100" value="12000" /></td>
+    </tr>
+    <tr>
+      <td>Avanço por Dente (mm)</td>
+      <td><input type="number" id="avanceDente" min="0.001" step="0.001" value="0.05" /></td>
+    </tr>
+    <tr>
+      <td>Número de Dentes</td>
+      <td><input type="number" id="numDentes" min="1" step="1" value="2" /></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="result" id="resultado">
+  Avanço por minuto (FMM): — <br />
+  Avanço por segundo (mm/s): — <br />
+  Velocidade de corte (m/min): — 
+</div>
+
+<script>
+  const diametroInput = document.getElementById('diametro');
+  const rpmInput = document.getElementById('rpm');
+  const avanceDenteInput = document.getElementById('avanceDente');
+  const numDentesInput = document.getElementById('numDentes');
+  const resultadoDiv = document.getElementById('resultado');
+
+  function calcular() {
+    const diametro = parseFloat(diametroInput.value);
+    const rpm = parseFloat(rpmInput.value);
+    const avanceDente = parseFloat(avanceDenteInput.value);
+    const numDentes = parseInt(numDentesInput.value);
+
+    if (diametro > 0 && rpm > 0 && avanceDente > 0 && numDentes > 0) {
+      const avancePorMinuto = avanceDente * numDentes * rpm; // FMM
+      const avancePorSegundo = avancePorMinuto / 60; // mm/s
+      const velocidadeCorte = (Math.PI * diametro * rpm) / 1000; // m/min
+
+      resultadoDiv.innerHTML = `
+        Avanço por minuto (FMM): <strong>${avancePorMinuto.toFixed(2)} mm/min</strong><br />
+        Avanço por segundo (mm/s): <strong>${avancePorSegundo.toFixed(2)} mm/s</strong><br />
+        Velocidade de corte (m/min): <strong>${velocidadeCorte.toFixed(2)} m/min</strong>
+      `;
+    } else {
+      resultadoDiv.innerHTML = `Por favor, insira valores válidos em todos os campos.`;
+    }
+  }
+
+  diametroInput.addEventListener('input', calcular);
+  rpmInput.addEventListener('input', calcular);
+  avanceDenteInput.addEventListener('input', calcular);
+  numDentesInput.addEventListener('input', calcular);
+
+  // calcular ao carregar a página
+  calcular();
+</script>
+
+<footer>
+  &copy; 2025 Delta CNC - Todos os direitos reservados
+</footer>
+
+</body>
+</html>
